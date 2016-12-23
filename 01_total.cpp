@@ -639,19 +639,22 @@ using namespace std;
 //    cout << endl << endl;
 //}
 
-//void Incr(int& a)
+//template<typename T>
+//void Incr(T& a)
 //{
 //    ++a;
 //}
 
-//void Pow2(int& a)
+//template<typename T>
+//void Pow2(T& a)
 //{
 //    a *= a;
 //}
 
-//bool IsOdd(int a)
+//template<typename T>
+//bool IsOdd(T a)
 //{
-//    return !(a % 2);
+//    return !((int)a % 2);
 //}
 
 //template<typename T>
