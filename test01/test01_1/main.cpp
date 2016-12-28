@@ -1,148 +1,119 @@
 #include <iostream>
 #include <string>
-#include <vector>
+#include <cassert>
+
+#define ARR_SIZE(a) sizeof(a)/sizeof(a[0])
 
 using namespace std;
 
-class HTMLElement
+template<typename T>
+class ImmutableBuffer
 {
-    size_t width;
-    size_t height;
+private:
+    const T* m_inner_buffer;
+
+    size_t m_size;
+
+    ImmutableBuffer& operator =(const T& input_array);
+    ImmutableBuffer& operator =(const ImmutableBuffer& other);
 public:
-    unsigned Width() const;
-    unsigned Height() const;
-    bool Hidden() const;
-
-    virtual string Render() = 0;
-};
-
-class HTMLButtonElement : public HTMLElement
-{
-    string m_title;
-public:
-    HTMLButtonElement(string title)
-       : m_title(title)
-    { }
-
-    const string& Title() const
-    {
-        return m_title;
-    }
-
-    string Render()
-    {
-        string res = "<button>" + Title() + "</button>";
-        return res;
-    }
-};
-
-class HTMLImageElement : public HTMLElement
-{
-    size_t m_width;
-    size_t m_height;
-    string m_url;
-public:
-    HTMLImageElement(size_t width, size_t height, string url)
-        : m_width(width)
-        , m_height(height)
-        , m_url(url)
+    ImmutableBuffer(const T* input_array, size_t input_array_size)
+        : m_inner_buffer(input_array)
+        , m_size(input_array_size)
     {}
 
-    unsigned Height() const
+    ImmutableBuffer(const ImmutableBuffer& other)
+        : m_inner_buffer(other.m_inner_buffer)
+        , m_size(other.m_size)
+    {}
+
+    size_t getSize() const
     {
-        return m_height;
+        return m_size;
     }
 
-    unsigned Width() const
+    const T& operator [](size_t index) const
     {
-        return m_width;
+        return m_inner_buffer[index];
     }
 
-    const string& Url() const
+    bool operator ==(const ImmutableBuffer<T>& rhs)
     {
-        return m_url;
+        if (getSize() != rhs.getSize())
+        {
+           return false;
+        }
+
+        for (size_t i = 0; i < getSize(); ++i)
+        {
+            if ((*this)[i] != rhs[i])
+            {
+               return false;
+            }
+        }
+
+        return true;
     }
 
-    string Render()
+    bool operator !=(const ImmutableBuffer<T>& rhs)
     {
-        char temp_h[3];
-        itoa(Height(), temp_h, 10);
-
-        char temp_w[3];
-        itoa(Width(), temp_w, 10);
-
-        string res = "<img src=" + Url() + " height=" + temp_h + " width=" + temp_w + ">";
-        return res;
-    }
-};
-
-class HTMLTextAreaElement : public HTMLElement
-{
-    string m_content;
-public:
-    HTMLTextAreaElement(string content)
-        : m_content(content)
-     { }
-
-    const string& Content() const
-    {
-        return m_content;
+        return !((*this) == rhs);
     }
 
-    string Render()
+    ~ImmutableBuffer()
     {
-        string res = "<textarea>\n    " + Content() + "\n</textarea>";
-        return res;
+        delete[] m_inner_buffer;
     }
 };
 
 template<typename T>
-bool all_of(T* arr, size_t length, bool(*p)(const T& elem))
+ostream& operator <<(ostream& os, const ImmutableBuffer<T>& obj)
 {
-    for (int i = 0; i < length; ++i)
+    for (size_t i = 0; i < obj.getSize(); ++i)
     {
-        if (!(p(arr[i])))
+        os << obj[i];
+
+        if(i < obj.getSize() - 1)
         {
-            return false;
+            cout << ", ";
+        }
+        else
+        {
+            cout << ".";
         }
     }
-    return true;
+
+    return os;
 }
 
-template<typename T>
-bool any_of(T* arr, size_t length, bool(*p)(const T& elem))
+int main()
 {
-    for (int i = 0; i < length; ++i)
-    {
-        if(p(arr[i]))
-        {
-            return true;
-        }
-    }
-}
+    int test_arr[] = { 5, 1, 19, 65, 49 };
+    int test_arr2[] = { 5, 777, 19, 65, 49 };
 
-int main(int argc, char *argv[])
-{
-    //vector<HTMLElement> elements(3);
-    HTMLElement* elements[3] =
-    {
-        new HTMLButtonElement("PRETTY_BUTTON"),
-        new HTMLImageElement(45, 60, "vk.com/foo.png"),
-        new HTMLTextAreaElement("WHOOA, LE CONTENTO!")
-    };
+    ImmutableBuffer<int> foo(test_arr, ARR_SIZE(test_arr));
+    ImmutableBuffer<int> bar(foo);
 
-    for (int var = 0; var < 3; ++var)
-    {
-        cout << elements[var]->Render() << endl;
-    }
+    cout << "foo: " << foo << endl;
+    cout << "bar: " << bar << endl;
 
-//    HTMLElement* b = new HTMLButtonElement("PRETTY_BUTTON");
-//    HTMLElement* i = new HTMLImageElement(45, 60, "vk.com/foo.png");
-//    HTMLElement* a = new HTMLTextAreaElement("WHOOA, LE CONTENTO!");
+    cout << endl;
 
-//    cout << b->Render() << endl << endl;
-//    cout << i->Render() << endl << endl;
-//    cout << a->Render() << endl << endl;
+    assert(foo == bar);
+    cout << "Buffer equality assert PASSED." << endl;
+
+    ImmutableBuffer<int> thrird(test_arr2, ARR_SIZE(test_arr));
+
+    assert(foo != thrird);
+    cout << "Non-equality assert PASSED." << endl;
+
+    ImmutableBuffer<int> quadro = thrird;
+
+    assert(quadro[0] == 5);
+    cout << "[]-access assert PASSED." << endl;
+
+    //quadro[1] = 666;
+    //quadro = foo;
 
     return 0;
 }
