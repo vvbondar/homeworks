@@ -1,4 +1,4 @@
-﻿#include <iostream>
+#include <iostream>
 #include <iomanip>
 #include <cstring>
 #include <vector>
@@ -10,19 +10,19 @@ using namespace std;
 
 // -1_07------------------------------------
 
-//char *cat(char *left, char *right)
+//char *cat(const char *left, const char *right)
 //{
 //    size_t left_size  = strlen(left);
 //    size_t right_size = strlen(right);
 
 //    char *res = new char[left_size + right_size + 1];
 
-//    for (int i = 0; i < left_size; ++i)
+//    for (size_t i = 0; i < left_size; ++i)
 //    {
 //        res[i] = left[i];
 //    }
 
-//    for (int i = 0; i < right_size; ++i)
+//    for (size_t i = 0; i < right_size; ++i)
 //    {
 //        res[i + left_size] = right[i];
 //    }
@@ -32,7 +32,7 @@ using namespace std;
 //    return res;
 //}
 
-//int main(int argv, char* argc[])
+//int main()
 //{
 //    char foo[] = "HI";
 //    char space[] = " ";
@@ -50,42 +50,25 @@ using namespace std;
 
 // -1_08------------------------------------
 
-//int CharFreq(char *str, char c)
+//int main()
 //{
-//    int count = 0;
-//    for(int i = 0; i < strlen(str); ++i)
-//    {
-//        if(str[i] == c)
-//        {
-//            ++count;
-//        }
-//    }
-//    return count;
-//}
-
-//int main(int argv, char* argc[])
-//{
-//    char str[80], penalty_buff[80];
+//    char str[80];
+//    size_t ascii_matches[256]{0};
 
 //    cout << "Enter your string: ";
-//    cin.getline(str, 255);
+//    cin.getline(str, 80);
 
-//    for (int i = 0; i < strlen(str); ++i)
+//    for (size_t i = 0; i < strlen(str); ++i)
 //    {
-//        if(CharFreq(penalty_buff, str[i]))
+//        ascii_matches[(int)str[i]]++;
+//    }
+
+//    for (size_t i = 0; i < 256; ++i)
+//    {
+//        if(ascii_matches[i])
 //        {
-//            penalty_buff[i] = '\n';
-//            continue;
+//            cout << "'" << (char)i << "' occurs " << ascii_matches[i] << " times." << endl;
 //        }
-
-//        cout << "Character '"
-//             << str[i]
-//             << "' occurs "
-//             << CharFreq(str, str[i])
-//             << " times."
-//             << endl;
-
-//        penalty_buff[i] = str[i];
 //    }
 
 //    return 0;
@@ -93,7 +76,7 @@ using namespace std;
 
 // -1_09------------------------------------
 
-//int main(int argv, char* argc[])
+//int main()
 //{
 //    char str[80];
 //    char pattern[] = "abcdefgh123456-0";
@@ -101,13 +84,13 @@ using namespace std;
 //    cout << "Enter your string: \n";
 //    cin.getline(str, 256);
 
-//    for (int i = 0; i < strlen(str); ++i)
+//    for (size_t i = 0; i < strlen(str); ++i)
 //    {
-//        for (int j = 0; j < strlen(pattern); ++j)
+//        for (size_t j = 0; j < strlen(pattern); ++j)
 //        {
 //            if(str[i] == pattern[j])
 //            {
-//                str[i] = pattern[(j + 5 >= strlen(pattern) ? (j + 5) % strlen(pattern) : j + 5)];
+//                str[i] = pattern[(j + 5) % strlen(pattern)];
 //                break;
 //            }
 //        }
@@ -120,23 +103,23 @@ using namespace std;
 
 // -1_10------------------------------------
 
-//int main(int argv, char* argc[])
+//int main()
 //{
-//    char str[] = "aaa bbb cccc ddd eee ff g";
+//    char str[] = "aaa  bbb cccc ddd    eee ff g ";
 //    size_t letters = 0;
 
 //    cout << str << endl << endl;
 
-//    for (int i = 0; i < strlen(str); ++i)
+//    for (size_t i = 0; i < strlen(str); ++i)
 //    {
-//        if(str[i] != ' ')
+//        if (str[i] != ' ')
 //        {
-//            ++letters;
+//            letters++;
 //        }
 
-//        if(str[i + 1] == ' ' || str[i + 1] == '\0')
+//        if (str[i + 1] == ' ' || str[i + 1] == '\0')
 //        {
-//            str[i - (letters - 1)] -= 32;
+//            str[i - (letters - 1)] = toupper(str[i - (letters - 1)]);
 //            letters = 0;
 //        }
 //    }
@@ -148,7 +131,7 @@ using namespace std;
 
 // -1_11------------------------------------
 
-//int main(int argv, char* argc[])
+//int main()
 //{
 //    char str[] = "aaa bbb ccc ddd eee fff gg";
 //    int letters = 0;
@@ -201,7 +184,7 @@ using namespace std;
 //    }
 //}
 
-//int main(int argv, char* argc[])
+//int main()
 //{
 //    size_t size = 12;
 //    int* arr = new int[size];
@@ -230,71 +213,55 @@ using namespace std;
 
 // -1_13------------------------------------
 
-//bool Contains(int* arr, size_t size, int value)
+//int main()
 //{
-//    for (int i = 0; i < size; ++i)
+//    srand(size_t(time(0)));
+
+//    size_t arr[50];
+//    size_t* pArr = arr;
+
+//    for (int i = 0; i < 100; ++i)
 //    {
-//        if (arr[i] == value)
+//        if (i & 1)
 //        {
-//            return true;
-//        }
-//    }
-//    return false;
-//}
-
-//int main(int argv, char* argc[])
-//{
-//    const size_t size = 50;
-//    int arr[size], penalty_arr[size]{ 0 };
-//    int* ppa = penalty_arr;
-
-//    srand((unsigned int)time(0));
-
-//    for (int i = 0; i < size * 2; ++i)
-//    {
-//        if (i % 2)
-//        {
-//            arr[i / 2] = i;
-//            cout << arr[i / 2] << ' ';
+//            *pArr = i;
+//            cout << *pArr << ' ';
+//            pArr++;
 //        }
 //    }
 
 //    cout << endl << endl;
 
-//    while (Contains(penalty_arr, size, 0))
+//    //This causes the original array changing. A little conflict with the task.
+//    for (int i = 0; i < 50; ++i)
 //    {
-//        int temp = rand() % size;
-
-//        if (!Contains(penalty_arr, size, arr[temp]))
-//        {
-//            cout << arr[temp] << ' ';
-//            *ppa++ = arr[temp];
-//        }
-//        else continue;
+//        swap(arr[i], arr[rand() % 50]);
 //    }
 
-//    cout << endl;
+//    for (int i = 0; i < 50; ++i)
+//    {
+//        cout << arr[i] << ' ';
+//    }
 
 //    return 0;
 //}
 
 // -1_14------------------------------------
 
-////count <= max, of course
 //int* MakeUniques(int min, int max, size_t count)
 //{
 //    if(count > max)
 //    {
-//        exit(1);
+//        throw 9000;
 //    }
 
 //    int* arr = new int[count];
 
-//    for (int i = 0; i < count; ++i)
+//    for (size_t i = 0; i < count; ++i)
 //    {
 //        arr[i] = min + rand() % (max - min);
 
-//        for (int j = 0; j < count; ++j)
+//        for (size_t j = 0; j < count; ++j)
 //        {
 //            if(j == i || arr[i] != arr[j])
 //            {
@@ -321,22 +288,28 @@ using namespace std;
 //{
 //    char* res = new char[size + 1];
 
-//    for (int i = 0; i < size; ++i)
+//    for (size_t i = 0; i < size; ++i)
 //        res[i] = pattern[rand() % strlen(pattern)];
 
 //    //Security requirements
 //    int* unique_indices = MakeUniques(0, size, 3);
 
-//    res[unique_indices[0]] = 65 + rand() % 26;
-//    res[unique_indices[1]] = 97 + rand() % 26;
-//    res[unique_indices[2]] = 48 + rand() % 10;
+//    const char security_parts[3] = { char(65 + rand() % 26),
+//                                     char(97 + rand() % 26),
+//                                     char(48 + rand() % 10) };
+
+//    for (int i = 0; i < 3; ++i)
+//    {
+//        res[unique_indices[i]] = security_parts[i];
+//    }
 
 //    res[size] = '\0';
 
+//    delete[] unique_indices;
 //    return res;
 //}
 
-//int main(int argv, char* argc[])
+//int main()
 //{
 //    srand((unsigned int)time(0));
 
@@ -348,19 +321,113 @@ using namespace std;
 //        cout << "Press any key to generate a password (Esc to exit):\n";
 
 //        char* pw = GeneratePW(size);
-//        //Using strlen(pw) as a loop limit causes extending of GeneratePW() return value.
-//        //confused a little
-//        for (int i = 0; i < size; ++i)
+
+//        for (size_t i = 0; i < size; ++i)
 //        {
 //            cout << pw[i];
 //        }
-
 //        cout << endl;
+
+//        delete[] pw;
 //    } while(getch() != 27);
 
 //    return 0;
 //}
 
+// -1_15------------------------------------
+
+//void Rotate(int**& arr, size_t n, size_t m)
+//{
+//    int** rotated = new int*[m];
+
+//    for (size_t i = 0; i < m; ++i)
+//    {
+//        rotated[i] = new int[n];
+//    }
+
+//    for (size_t i = 0; i < n; ++i)
+//    {
+//        for (size_t j = 0; j < m; ++j)
+//        {
+//            rotated[j][n - 1 - i] = arr[i][j];
+//        }
+//    }
+
+//    for (size_t i = 0; i < n; ++i)
+//    {
+//        delete[] arr[i];
+//    }
+//    delete[] arr;
+
+//    arr = rotated;
+//}
+
+//int main()
+//{
+//    size_t n, m;
+
+//    do
+//    {
+//        system("cls");
+//        cout << "Enter the number of  lines  (0 < n <= 100): ";
+//        cin >> n;
+
+//        cout << "Enter the number of columns (0 < m <= 100): ";
+//        cin >> m;
+//    }
+//    while (n > 100 || m > 100);
+
+//    int** arr = new int*[n];
+//    for (size_t i = 0; i < n; ++i)
+//    {
+//        arr[i] = new int[m];
+//    }
+
+//    cout << "OK. Now enter array members:" << endl;
+
+//    for (size_t i = 0; i < n; ++i)
+//    {
+//        for (size_t j = 0; j < m; ++j)
+//        {
+//            cout << "[" << i << "][" << j << "]: ";
+//            cin >> arr[i][j];{}
+//        }
+//    }
+
+//    cout << endl << "Origin array:" << endl;
+
+//    for (size_t i = 0; i < n; ++i)
+//    {
+//        for (size_t j = 0; j < m; ++j)
+//        {
+//            cout.width(5);
+//            cout << arr[i][j];
+//        }
+//        cout << endl;
+//    }
+
+//    Rotate(arr, n, m);
+
+//    cout << endl << "Rotated array:" << endl;
+
+//    for (size_t i = 0; i < m; ++i)
+//    {
+//        for (size_t j = 0; j < n; ++j)
+//        {
+//            cout.width(5);
+//            cout << arr[i][j];
+//        }
+//        cout << endl;
+//    }
+
+//    for (size_t i = 0; i < m; ++i)
+//    {
+//        delete[] arr[i];
+//    }
+//    delete[] arr;
+
+//    return 0;
+//}
 
 // -1_16------------------------------------
 
@@ -371,7 +438,7 @@ using namespace std;
 //            arr[0][2]*(arr[1][0]*arr[2][1] - arr[1][1]*arr[2][0]));
 //}
 
-//int main(int argc, char *argv[])
+//int main()
 //{
 //    srand((unsigned int)time(0));
 
@@ -423,6 +490,118 @@ using namespace std;
 //    return 0;
 //}
 
+// -1_17------------------------------------
+
+//typedef vector<vector<double>> matrix;
+
+//void InitRndMatrix(matrix& mtrx, int min, int max)
+//{
+//    for (size_t i = 0; i < mtrx.size(); ++i)
+//    {
+//        for (size_t j = 0; j < mtrx[0].size(); ++j)
+//        {
+//            if (min == 0 && max == 0)
+//            {
+//                mtrx[i][j] = 0;
+//                continue;
+//            }
+//            mtrx[i][j] = min + rand() % (max - min);
+//        }
+//    }
+//}
+
+//matrix CreateCustomMatrix()
+//{
+//    size_t lines, columns;
+
+//    cout << "Enter a number of  lines  of the new matrix: ";
+//    cin >> lines;
+
+//    if(!lines) throw "!lines";
+
+//    cout << "Enter a number of columns of the new matrix: ";
+//    cin >> columns;
+
+//    if(!columns) throw "!columns";
+
+//    matrix out(lines, vector<double>(columns));
+
+//    cout << "OK. Enter matrix elements: " << endl;
+
+//    for (size_t i = 0; i < lines; ++i)
+//    {
+//        for (size_t j = 0; j < columns; ++j)
+//        {
+//            cout << "["<< i << "][" << j << "]: ";
+//            cin >> out[i][j];
+//        }
+//        cout << endl;
+//    }
+
+//    return out;
+//}
+
+//void PrintMatrix(const matrix& mtrx)
+//{
+//    for (size_t i = 0; i < mtrx.size(); ++i)
+//    {
+//        for (size_t j = 0; j < mtrx[0].size(); ++j)
+//        {
+//            cout.width(5);
+//            cout << mtrx[i][j] << ' ';
+//        }
+//        cout << endl;
+//    }
+//}
+
+//matrix MultiplicateMatrices(const matrix& first_matrix, const matrix& second_matrix)
+//{
+//    if (first_matrix[0].size() != second_matrix.size())
+//        throw "first_matrix[0].size() != second_matrix.size()";
+
+//    matrix res(first_matrix.size(), vector<double>(second_matrix[0].size()));
+//    InitRndMatrix(res, 0, 0);
+
+//    for (size_t i = 0; i < res.size(); i++)
+//    {
+//        for (size_t j = 0; j < res[0].size(); j++)
+//        {
+//            for (size_t k = 0; k < first_matrix[0].size(); k++)
+//            {
+//                res[i][j] += first_matrix[i][k] * second_matrix[k][j];
+//            }
+//        }
+//    }
+
+//    return res;
+//}
+
+//int main()
+//{
+////    srand(size_t(time(0)));
+
+////    matrix first_matrix(2, vector<double>(4));
+////    matrix second_matrix(4, vector<double>(2));
+
+////    InitRndMatrix(first_matrix, -10, 10);
+////    InitRndMatrix(second_matrix, -10, 10);
+
+//    matrix first_matrix = CreateCustomMatrix(), second_matrix = CreateCustomMatrix();
+
+//    cout << "First matrix: " << endl;
+//    PrintMatrix(first_matrix);
+//    cout << endl;
+
+//    cout << "Second matrix: " << endl;
+//    PrintMatrix(second_matrix);
+//    cout << endl;
+
+//    cout << "Result of multiplication: " << endl;
+//    PrintMatrix(MultiplicateMatrices(first_matrix, second_matrix));
+
+//    return 0;
+//}
+
 // -1_18------------------------------------
 
 //typedef struct
@@ -442,10 +621,10 @@ using namespace std;
 
 //void InitFaculty(student* group, size_t group_size,
 //               professor* supervisors, size_t department_size,
-//               char** f_names, char** s_names)
+//               const char** f_names, const char** s_names)
 //{
 //    //Academic department initialization
-//    for (int i = 0; i < department_size; ++i)
+//    for (size_t i = 0; i < department_size; ++i)
 //    {
 //        *supervisors[i].name = '\0';
 //        strcat(supervisors[i].name, f_names[rand() % 8]);
@@ -457,7 +636,7 @@ using namespace std;
 //    }
 
 //    //Group initialization
-//    for (int i = 0; i < group_size; ++i)
+//    for (size_t i = 0; i < group_size; ++i)
 //    {
 //        *group[i].name = '\0';
 //        strcat(group[i].name, f_names[rand() % 8]);
@@ -473,7 +652,7 @@ using namespace std;
 
 //void PrintGroupFullInfo(student* group, size_t group_size)
 //{
-//    for (int i = 0; i < group_size; ++i)
+//    for (size_t i = 0; i < group_size; ++i)
 //    {
 //        cout << i + 1 << ". " << left;
 //        cout.width(25);
@@ -486,30 +665,15 @@ using namespace std;
 //    cout << endl;
 //}
 
-
-//int main(int argc, char *argv[])
+//int main()
 //{
 //    srand(size_t(time(0)));
 
-//    char** f_names = new char*[8];
-//    f_names[0] = new char[4]{"Bob"};
-//    f_names[1] = new char[5]{"Bill"};
-//    f_names[2] = new char[7]{"Javier"};
-//    f_names[3] = new char[8]{"Matumba"};
-//    f_names[4] = new char[9]{"Rudolphi"};
-//    f_names[5] = new char[6]{"Uther"};
-//    f_names[6] = new char[6]{"Jason"};
-//    f_names[7] = new char[6]{"Peter"};
+//    static const char* f_names[] =
+//    {"Bob", "Bill", "Javier", "Ian", "Rudolphi", "Uther", "Jason", "Peter"};
 
-//    char** s_names = new char*[8];
-//    s_names[0] = new char[6]{"Heinz"};
-//    s_names[1] = new char[11]{"Guatebusto"};
-//    s_names[2] = new char[6]{"Bowie"};
-//    s_names[3] = new char[7]{"Bobson"};
-//    s_names[4] = new char[6]{"Trump"};
-//    s_names[5] = new char[9]{"McArthur"};
-//    s_names[6] = new char[7]{"Cooper"};
-//    s_names[7] = new char[6]{"Lee"};
+//    static const char* s_names[] =
+//    {"Heinz", "Guatebusto", "Bowie", "Bobson", "Trump", "McArthur", "Cooper", "Lee"};
 
 //    size_t group_size = 8;
 //    size_t department_size = 3;
@@ -523,7 +687,7 @@ using namespace std;
 
 //    cout << "Mean GPA of group is ";
 
-//    for (int i = 0; i < group_size; ++i)
+//    for (size_t i = 0; i < group_size; ++i)
 //    {
 //        mean_gpa += group[i].gpa;
 //    }
@@ -535,11 +699,17 @@ using namespace std;
 //    student worst = group[0];
 //    student best = group[0];
 
-//    for (int i = 0; i < group_size - 1; ++i)
+//    for (size_t i = 0; i < group_size - 1; ++i)
 //    {
-//        worst = group[i + 1].gpa < worst.gpa ? group[i + 1] : worst;
-//        best = group[i + 1].gpa > best.gpa ? group[i + 1]: best;
+//        if(group[i + 1].gpa < worst.gpa)
+//        {
+//            worst = group[i + 1];
+//        }
 
+//        if(group[i + 1].gpa > best.gpa)
+//        {
+//            best = group[i + 1];
+//        }
 //    }
 
 //    cout << "The best student is " << best.name << " with " << best.gpa << "." << endl;
@@ -548,7 +718,7 @@ using namespace std;
 //    size_t counter = 0;
 //    cout << "Students whose supervisors are older than 50:" << endl;
 
-//    for (int i = 0; i < group_size; ++i)
+//    for (size_t i = 0; i < group_size; ++i)
 //    {
 
 //        if(group[i].supervisor->age >= 50)
@@ -574,8 +744,6 @@ using namespace std;
 //        delete s_names[i];
 //    }
 
-//    delete[] f_names;
-//    delete[] s_names;
 //    delete[] group;
 //    delete[] department;
 
@@ -587,7 +755,7 @@ using namespace std;
 //template<typename T>
 //void Map(vector<T>& container, void (*func)(T&))
 //{
-//    for (int i = 0; i < container.size(); ++i)
+//    for (size_t i = 0; i < container.size(); ++i)
 //    {
 //        func(container[i]);
 //    }
@@ -598,13 +766,14 @@ using namespace std;
 //{
 //    vector<T> res_container(container.size());
 //    size_t rc_index = 0;
-//    for (int i = 0; i < container.size(); ++i) {
+
+//    for (size_t i = 0; i < container.size(); ++i)
+//    {
 //        if(pred(container[i]))
 //        {
 //            res_container[rc_index++] = container[i];
 //        }
-//        else
-//            continue;
+//        else continue;
 //    }
 //    res_container.resize(rc_index);
 //    container = res_container;
@@ -613,16 +782,9 @@ using namespace std;
 //template<typename T>
 //void Reduce(vector<T>& container, T (*action)(T, T))
 //{
-//    size_t newsize = container.size();
-
-//    while(newsize != 1)
+//    for (size_t i = 1; i < container.size(); ++i)
 //    {
-//        container[0] = action(container[0], container[1]);
-//        for (int i = 1; i < newsize - 1; ++i)
-//        {
-//            container[i] = container[i + 1];
-//        }
-//        newsize--;
+//        container[0] = action(container[0], container[i]);
 //    }
 
 //    container.resize(1);
@@ -631,7 +793,7 @@ using namespace std;
 //template<typename T>
 //void PrintArray(T arr)
 //{
-//    for (int i = 0; i < arr.size(); ++i)
+//    for (size_t i = 0; i < arr.size(); ++i)
 //    {
 //        cout.width(3);
 //        cout << arr[i] << " ";
@@ -663,11 +825,11 @@ using namespace std;
 //    return a + b;
 //}
 
-//int main(int argv, char* argc[])
+//int main()
 //{
 //    vector<int> arr(15);
 
-//    for (int i = 0; i < arr.size(); ++i)
+//    for (size_t i = 0; i < arr.size(); ++i)
 //    {
 //        arr[i] = i + 1;
 //    }
@@ -693,3 +855,4 @@ using namespace std;
 
 //    return 0;
 //}
+
