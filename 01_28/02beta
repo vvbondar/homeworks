@@ -1,0 +1,127 @@
+#include <iostream>
+#include <unordered_map>
+
+template<typename K, typename V>
+class LRUCache
+{
+    std::unordered_map<K, V> m_storage;
+    std::unordered_map<K, unsigned long long> m_appearances;
+
+    const size_t m_storage_max_size;
+    unsigned long long m_top_priority;
+
+    const K getLeastRecentlyUsedKey(const std::unordered_map<K, unsigned long long>& sheet) const
+    {
+        auto sheet_it = sheet.begin();
+        K res = sheet_it->first;
+        ++sheet_it;
+
+        for(; sheet_it != sheet.end(); ++sheet_it)
+        {
+            if(sheet_it->first < res)
+            {
+                res = sheet_it->first;
+            }
+        }
+        return res;
+    }
+public:
+    LRUCache(size_t max_size)
+        :m_storage_max_size(max_size)
+        ,m_top_priority(0)
+    {}
+
+    // put value by key
+    void Put(const K& key, const V& value)
+    {
+        if(!Exists(key))
+        {
+            if(Size() == m_storage_max_size)
+            {
+                K key_to_erase = getLeastRecentlyUsedKey(m_appearances);
+                std::cout << "storage is full! erasing [" << key_to_erase << "]["
+                          << m_storage.find(key_to_erase)->second << "]" << std::endl;
+                m_storage.erase(m_storage.find(key_to_erase));
+                m_appearances.erase(m_appearances.find(key_to_erase));
+            }
+            m_storage.insert(std::make_pair(key, value));
+            m_appearances.insert(std::make_pair(key, m_top_priority));
+
+
+            std::cout << "inserted [" << key << "][" << value
+                      << "] with priority (" << m_top_priority << ")" << std::endl;
+
+            ++m_top_priority;
+        }
+        else
+        {
+            m_appearances.find(key)->second++;
+            std::cout << "updated [" << key << "][" << value
+                      << "] with priority (" << m_top_priority << ")" << std::endl;
+            ++m_top_priority;
+        }
+    }
+
+    // Retrieves an entry from the cache that has been cached before
+    // using put(). Returns the cached entry. Throws exception,
+    // if there is no entry with the key K
+    const V& Get(const K& key)
+    {
+        if(!Exists(key))
+        {
+            throw std::range_error("<ERROR>: Key doesn't exists.");
+        }
+        else
+        {
+            m_appearances.find(key)->second = m_top_priority;
+            std::cout << "got [" << key << "][" << m_storage.find(key)->second
+                      << "] with priority (" << m_top_priority
+                      << ")" << std::endl;
+            ++m_top_priority;
+            return m_storage.find(key)->second;
+        }
+    }
+
+    // Checks presence of the value by the given key
+    bool Exists(const K& key)
+    {
+        return m_storage.find(key) != m_storage.end();
+    }
+
+    // Clears all the entries in the cache
+    void Clear()
+    {
+        m_storage.clear();
+        m_appearances.clear();
+    }
+
+    // Returns size
+    size_t Size() const
+    {
+        return m_storage.size();
+    }
+};
+
+int main()
+{
+    LRUCache<int, int> cache(3);
+    cache.Put(1, 100);
+    cache.Put(2, 200);
+    cache.Put(3, 300);
+    cache.Put(1, 100);
+    cache.Put(2, 200);
+    cache.Put(3, 300);
+    cache.Put(1, 100);
+    cache.Put(2, 200);
+    cache.Put(3, 300);
+    cache.Put(1, 300);
+    cache.Put(4, 400);
+    cache.Put(4, 400);
+    cache.Put(4, 400);
+    cache.Put(4, 400);
+    cache.Put(4, 400);
+    cache.Put(3, 300);
+    cache.Get(2);
+
+    return 0;
+}
