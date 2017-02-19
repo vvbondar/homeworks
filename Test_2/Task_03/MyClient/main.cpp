@@ -6,7 +6,10 @@ int main(int argc, char *argv[])
     QCoreApplication a(argc, argv);
 
     MyClient c;
-    c.Connect();
+    QThread cli_thread;
+    c.moveToThread(&cli_thread);
+    c.connect(&cli_thread, SIGNAL(started()), &c, SLOT(onThreadStarted()));
+    cli_thread.start();
 
     return a.exec();
 }

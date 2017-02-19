@@ -18,7 +18,8 @@ public:
 public slots:
     void start();
     void onNewConnection();
-    //void onReadClient();
+    //void onBytesWritten(qint64 bytes);
+    void onReadClient();
 private:
     QTcpServer* m_p_tcpServer;
     QString m_packet;

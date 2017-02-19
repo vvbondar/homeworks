@@ -1,8 +1,19 @@
 #include <iostream>
-#include <cassert>
-#include <string>
+#include <list>
 #include <unordered_map>
+#include <sstream>
+#include <cassert>
 
+/* I tried to make efficient double-hashtable cache with priority counting
+ * but it needs heavy search method called every time we cross capacity limit
+ * (it is obviously not that rare case).
+ *
+ * It seems senseless comparing to list's pop()/push(). Decided to save last
+ * version for history. Just minimize it.
+
+*/
+
+/*
 template<typename K, typename V>
 class LRUCache
 {
@@ -140,53 +151,177 @@ public:
     }
 };
 
+*/
+
+template<typename K, typename V>
+class LRUCache
+{
+    typedef std::list<std::pair<K, V>> lru_list;
+    typedef std::unordered_map<K, typename lru_list::iterator> lru_map;
+
+    lru_list m_list;
+    lru_map  m_map;
+
+    size_t m_capacity;
+    bool m_debug_mode = false;
+
+    bool Erase(const K& key)
+    {
+        if(!Exists(key))
+        {
+            return false;
+        }
+
+        auto it = m_map.find(key);
+        m_list.erase(it->second);
+        m_map.erase(it);
+        return true;
+    }
+
+    void ShrinkSize()
+    {
+        for(auto list_back = (--m_list.end()); Size() > m_capacity; --list_back)
+        {
+            if(m_debug_mode == true)
+            {
+                std::cout << "<pop> [" << list_back->first << "]["
+                          << list_back->second << "]" << std::endl;
+            }
+
+            m_map.erase(list_back->first);
+            m_list.pop_back();
+        }
+    }
+
+public:
+    LRUCache(const size_t max_size)
+        :m_capacity(max_size)
+    {}
+
+    void Put(const K& key, const V& value)
+    {
+        if(Exists(key))
+        {
+            Erase(key);
+        }
+
+        m_list.push_front(std::make_pair(key, value));
+        m_map.insert(std::make_pair(key, m_list.begin()));
+
+        if(m_debug_mode == true)
+        {
+            std::cout << "<ins> [" << key << "]["
+                      << value << "]" << std::endl;
+        }
+
+        if(Size() > m_capacity)
+        {
+            ShrinkSize();
+        }
+    }
+
+    const V& Get(const K& key)
+    {
+        if(!Exists(key))
+        {
+            std::stringstream er;
+            er << "<ERROR>: The cache doesn't contains [" << key << "].";
+            throw std::out_of_range(er.str());
+        }
+
+        auto it = m_map.find(key);
+        m_list.splice(m_list.begin(), m_list, it->second);
+
+        if(m_debug_mode == true)
+        {
+            std::cout << "<got> [" << key << "]["
+                      << it->second->second << "]" << std::endl;
+        }
+
+        return it->second->second;
+    }
+
+    bool Exists(const K& key)
+    {
+        if(m_map.count(key))
+        {
+            return true;
+        }
+        return false;
+    }
+
+    void Clear()
+    {
+        m_list.clear();
+        m_map.clear();
+
+        if(m_debug_mode == true)
+        {
+            std::cout << "<666> [CACHE FLUSHED]" << std::endl;
+        }
+    }
+
+    size_t Size()
+    {
+        return m_map.size();
+    }
+
+    //works correctly only if both of key and value have operator<<() overloaded
+    bool ToggleDebugMode()
+    {
+        m_debug_mode = m_debug_mode ? false : true;
+        return m_debug_mode;
+    }
+};
+
 int main()
 {
     LRUCache<int, std::string> cache(3);
 
-    cache.ToggleDebugMode();
+        cache.ToggleDebugMode();
 
-    cache.Put(1, "one");
+        cache.Put(1, "one");
 
-    assert(cache.Size() == 1);
-    assert(cache.Get(1) == "one");
+        assert(cache.Size() == 1);
+        assert(cache.Get(1) == "one");
 
-    cache.Put(2, "two");
-    cache.Put(3, "three");
-    cache.Put(1, "one");
-    cache.Put(2, "two");
-    cache.Put(3, "three");
+        cache.Put(2, "two");
+        cache.Put(3, "three");
+        cache.Put(1, "one");
+        cache.Put(2, "two");
+        cache.Put(3, "three");
 
-    assert(cache.Exists(1) && cache.Exists(2) && cache.Exists(3));
+        assert(cache.Exists(1) && cache.Exists(2) && cache.Exists(3));
 
-    cache.Put(1, "one");
-    cache.Put(2, "two");
-    cache.Put(3, "four");
-    cache.Put(1, "one");
-    cache.Put(4, "four");
-    cache.Put(4, "four");
-    cache.Put(4, "four");
-    cache.Put(4, "four");
-    cache.Put(4, "four");
-    cache.Put(5, "five");
-    cache.Put(3, "four");
+        cache.Put(1, "one");
+        cache.Put(2, "two");
+        cache.Put(4, "four");
+        cache.Put(1, "one");
+        cache.Put(4, "four");
+        cache.Put(4, "four");
+        cache.Put(4, "four");
+        cache.Put(4, "four");
+        cache.Put(4, "four");
+        cache.Put(5, "five");
+        cache.Put(3, "three");
 
-    assert(cache.Size() == 3);
+        assert(cache.Size() == 3);
 
-    bool value_popped = false;
-    try
-    {
-        cache.Get(2);
-    }
-    catch(std::exception& e)
-    {
-        value_popped = true;
-    }
+        bool value_popped = false;
+        try
+        {
+            cache.Get(2);
+        }
+        catch(std::exception& e)
+        {
+            value_popped = true;
+            std::cout << e.what() << std::endl;
+        }
 
-    assert(value_popped);
-    assert(cache.Exists(3) && !cache.Exists(2));
+        assert(value_popped);
+        assert(cache.Exists(3) && !cache.Exists(2));
 
-    std::cout << "<ASSERTIONS PASSED>" << std::endl;
+        std::cout << "<ASSERTIONS PASSED>" << std::endl;
 
-    return 0;
+        cache.Clear();
 }
