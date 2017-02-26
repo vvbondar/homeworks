@@ -6,13 +6,20 @@
 class String
 {
     std::shared_ptr<char> m_ptr;
+
+    void Swap(String& other)
+    {
+        std::swap(other.m_ptr, (*this).m_ptr);
+    }
 public:
     String()
         :m_ptr(nullptr)
     {}
 
     String(const char* other)
-        :m_ptr(new char[strlen(other) + 1])
+        :m_ptr(new char[strlen(other) + 1], std::default_delete<char[]>())
+        //std::array's second template argument cannot be initialized by a non-constant value
+        //so I was not able to use it here
     {
         strcpy(m_ptr.get(), other);
     }
@@ -23,8 +30,7 @@ public:
 
     String& operator =(const char* rhs)
     {
-        m_ptr = std::shared_ptr<char>(new char[strlen(rhs) + 1]);
-        strcpy(m_ptr.get(), rhs);
+        String(rhs).Swap(*this);
         return *this;
     }
 
@@ -32,19 +38,19 @@ public:
     {
         if(this != &rhs)
         {
-            m_ptr = rhs.m_ptr;
+            String(rhs).Swap(*this);
         }
         return *this;
-    }
-
-    bool operator ==(const String& rhs)
-    {
-        return !strcmp(m_ptr.get(), rhs.m_ptr.get());
     }
 
     bool operator ==(const char* rhs)
     {
         return !strcmp(m_ptr.get(), rhs);
+    }
+
+    bool operator ==(const String& rhs)
+    {
+        return *this == rhs.m_ptr.get();
     }
 
     bool operator !=(const String& rhs)
@@ -57,34 +63,29 @@ public:
         return !(*this == rhs);
     }
 
-    String& operator +=(const String& rhs)
-    {
-        char* tmp = new char[strlen(m_ptr.get()) + strlen(rhs.m_ptr.get()) + 1];
-        strcpy(tmp, m_ptr.get());
-        strcat(tmp, rhs.m_ptr.get());
-
-        m_ptr = std::shared_ptr<char>(tmp);
-
-        return *this;
-    }
-
     String& operator +=(const char* rhs)
     {
         char* tmp = new char[strlen(m_ptr.get()) + strlen(rhs) + 1];
         strcpy(tmp, m_ptr.get());
         strcat(tmp, rhs);
 
-        m_ptr = std::shared_ptr<char>(tmp);
+        String(tmp).Swap(*this);
         return *this;
     }
 
-    String operator +(const String& rhs)
+    String& operator +=(const String& rhs)
+    {
+        *this += rhs.m_ptr.get();
+        return *this;
+    }
+
+    String operator +(const char* rhs)
     {
         String out(*this);
         return out += rhs;
     }
 
-    String operator +(const char* rhs)
+    String operator +(const String& rhs)
     {
         String out(*this);
         return out += rhs;
@@ -102,14 +103,14 @@ public:
 
     void SetElem(size_t index, char c)
     {
-        String tmp(m_ptr.get());
+        String tmp(*this);
+        //does not work w/o get()
         tmp.m_ptr.get()[index] = c;
-        m_ptr = tmp.m_ptr;
+        Swap(tmp);
     }
 
     friend std::ostream& operator <<(std::ostream& os, const String& rhs);
     friend std::istream& operator >>(std::istream& is, const String& rhs);
-
 };
 
 std::ostream& operator <<(std::ostream& os, const String& rhs)

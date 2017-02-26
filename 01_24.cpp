@@ -13,25 +13,23 @@ void Map(vector<T>& container, void (*func)(T&))
 }
 
 template<typename T>
-void Filter(vector<T>& container, bool (*pred)(T))
+void Filter(vector<T>& container, bool (*pred)(const T&))
 {
-    vector<T> res_container(container.size());
     size_t rc_index = 0;
 
     for (size_t i = 0; i < container.size(); ++i)
     {
         if(pred(container[i]))
         {
-            res_container[rc_index++] = container[i];
+            container[rc_index++] = container[i];
         }
         else continue;
     }
-    res_container.resize(rc_index);
-    container = res_container;
+    container.resize(rc_index);
 }
 
 template<typename T>
-void Reduce(vector<T>& container, T (*action)(T, T))
+void Reduce(vector<T>& container, T (*action)(const T&, const T&))
 {
     for (size_t i = 1; i < container.size(); ++i)
     {
@@ -65,13 +63,13 @@ void Pow2(T& a)
 }
 
 template<typename T>
-bool IsOdd(T a)
+bool IsEven(const T& a)
 {
     return !((int)a % 2);
 }
 
 template<typename T>
-T Sum(T a, T b)
+T Sum(const T& a, const T& b)
 {
     return a + b;
 }
@@ -96,8 +94,8 @@ int main()
     cout << "Mapped with powering to 2: " << endl;
     PrintArray(arr);
 
-    Filter(arr, IsOdd);
-    cout << "Filtered by odds: " << endl;
+    Filter(arr, IsEven);
+    cout << "Filtered by evens: " << endl;
     PrintArray(arr);
 
     Reduce(arr, Sum);

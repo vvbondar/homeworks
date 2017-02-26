@@ -116,7 +116,6 @@ public:
         , m_angle_c(angle_c)
         , m_side(side)
     {}
-
 };
 
 class EquilateralTriangle : public Triangle
@@ -158,6 +157,11 @@ int main()
     }
 
     cout << "\nOverall square sum equals " << overall_square_sum << "." << endl;
+
+    for (auto i : shapes)
+    {
+        delete i;
+    }
 
     return 0;
 }
