@@ -27,6 +27,8 @@ list<pair<size_t, string>> MakeTopOfWords(const string& path, size_t top, bool c
         "be", "shall", "but", "from", "your", "do", "it"
     };
 
+    // lock check
+
     static list<char> banned_chars =
     {
         ' ', '\n', ',', '.', '!', '-', '|', '?',
